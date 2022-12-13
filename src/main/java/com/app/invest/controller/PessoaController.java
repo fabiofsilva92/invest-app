@@ -6,10 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/pessoa")
+@RequestMapping("/api/pessoa")
 public class PessoaController {
 
     @Autowired
@@ -27,12 +28,12 @@ public class PessoaController {
     }
 
     @PostMapping
-    public ResponseEntity<Pessoa> createPessoa(@RequestBody Pessoa pessoa){
+    public ResponseEntity<Pessoa> createPessoa(@RequestBody Pessoa pessoa) throws IOException {
         return ResponseEntity.ok().body(pessoaService.create(pessoa));
     }
 
     @PutMapping
-    public ResponseEntity<Pessoa> updatePessoa(@RequestBody Pessoa pessoa){
+    public ResponseEntity<Pessoa> updatePessoa(@RequestBody Pessoa pessoa) throws IOException {
         return ResponseEntity.ok().body(pessoaService.updatePessoa(pessoa));
     }
 
