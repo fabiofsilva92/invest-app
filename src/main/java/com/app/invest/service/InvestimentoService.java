@@ -6,6 +6,7 @@ import com.app.invest.repository.InvestimentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -13,6 +14,9 @@ public class InvestimentoService {
 
     @Autowired
     private InvestimentoRepository investimentoRepository;
+
+    @Autowired
+    private FileService fileService;
 
     public List<RegistroInvestimento> findAll(){
         return investimentoRepository.findAll();
@@ -23,7 +27,13 @@ public class InvestimentoService {
     }
 
     public RegistroInvestimento create(RegistroInvestimento investimento){
-        return investimentoRepository.save(investimento);
+        var created = investimentoRepository.save(investimento);
+        try{
+            fileService.generateInsertInvestimento(created);
+        }catch (IOException ex){
+            System.out.println(ex.getMessage());
+        }
+        return created;
     }
 
     public RegistroInvestimento updateInvestimento(RegistroInvestimento investimento){
