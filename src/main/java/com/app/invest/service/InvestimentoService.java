@@ -1,8 +1,8 @@
 package com.app.invest.service;
 
-import com.app.invest.model.Banco;
 import com.app.invest.model.RegistroInvestimento;
 import com.app.invest.repository.InvestimentoRepository;
+import com.app.invest.utils.QueryLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,7 @@ public class InvestimentoService {
     private InvestimentoRepository investimentoRepository;
 
     @Autowired
-    private FileService fileService;
+    private QueryLogger queryLogger;
 
     public List<RegistroInvestimento> findAll(){
         return investimentoRepository.findAll();
@@ -28,11 +28,18 @@ public class InvestimentoService {
 
     public RegistroInvestimento create(RegistroInvestimento investimento){
         var created = investimentoRepository.save(investimento);
-        try{
-            fileService.generateInsertInvestimento(created);
-        }catch (IOException ex){
-            System.out.println(ex.getMessage());
-        }
+
+        queryLogger.writeQueriesToFileInSeparateThread("insert into registro_investimento " +
+                "(banco, data, investimento, investidor, rendimento, valor, vencimento) values " +
+                "("+investimento.getBanco().getId()+", '" +
+                investimento.getData()+"', '" +
+                investimento.getInvestimento()+"', " +
+                investimento.getPessoa().getId()+", '" +
+                investimento.getRendimento()+"', " +
+                investimento.getValor()+", '" +
+                investimento.getVencimento()+"');");
+
+        System.out.println("Terminado Create");
         return created;
     }
 

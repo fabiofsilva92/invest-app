@@ -2,14 +2,12 @@ package com.app.invest.service;
 
 import com.app.invest.model.Pessoa;
 import com.app.invest.repository.PessoaRepository;
+import com.app.invest.utils.QueryLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 @Service
 public class PessoaService {
@@ -18,7 +16,7 @@ public class PessoaService {
     private PessoaRepository pessoaRepository;
 
     @Autowired
-    private FileService fileService;
+    private QueryLogger queryLogger;
 
     public List<Pessoa> findAll(){
         return pessoaRepository.findAll();
@@ -30,14 +28,14 @@ public class PessoaService {
 
     public Pessoa create(Pessoa pessoa) throws IOException {
         Pessoa created = pessoaRepository.save(pessoa);
-        fileService.generateInsertPessoa(created);
+        queryLogger.writeQueriesToFileInSeparateThread("insert into pessoa (nome) values ('"+pessoa.getNome()+"');");
         return created;
     }
 
     public Pessoa updatePessoa(Pessoa pessoa) throws IOException {
         pessoa.setId(pessoaRepository.findById(pessoa.getId()).orElseThrow(() -> new RuntimeException("Pessoa não encontrada para atualizar")).getId());
         Pessoa updated = pessoaRepository.save(pessoa);
-        fileService.generateUpdatePessoa(updated);
+        queryLogger.writeQueriesToFileInSeparateThread("update pessoa set nome = '"+pessoa.getNome()+"' where id = "+pessoa.getId());
         return updated;
     }
 

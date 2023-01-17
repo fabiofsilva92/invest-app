@@ -1,8 +1,8 @@
 package com.app.invest.service;
 
 import com.app.invest.model.Banco;
-import com.app.invest.model.Pessoa;
 import com.app.invest.repository.BancoRepository;
+import com.app.invest.utils.QueryLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,7 @@ public class BancoService {
     private BancoRepository bancoRepository;
 
     @Autowired
-    private FileService fileService;
+    private QueryLogger queryLogger;
 
     public List<Banco> findAll(){
         return bancoRepository.findAll();
@@ -28,11 +28,7 @@ public class BancoService {
 
     public Banco create(Banco banco){
         var created = bancoRepository.save(banco);
-        try {
-            fileService.generateInsertBanco(created);
-        }catch (IOException e){
-            System.out.println(e.getMessage());
-        }
+        queryLogger.writeQueriesToFileInSeparateThread("insert into banco (nome) values ('"+banco.getNome()+"');");
         return created;
     }
 
