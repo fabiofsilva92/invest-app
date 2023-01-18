@@ -32,9 +32,9 @@ public class PessoaController {
         return ResponseEntity.ok().body(pessoaService.create(pessoa));
     }
 
-    @PutMapping
+    @PutMapping(value = "/{id}")
     public ResponseEntity<Pessoa> updatePessoa(@RequestBody Pessoa pessoa,
-                                               @RequestParam Long id) {
+                                               @PathVariable Long id) {
         return ResponseEntity.ok().body(pessoaService.updatePessoa(pessoa, id));
     }
 

@@ -32,7 +32,7 @@ public class PessoaService {
     }
 
     public Pessoa updatePessoa(Pessoa pessoa, Long id){
-        Pessoa updated = pessoaRepository.findById(pessoa.getId()).orElseThrow(() ->
+        Pessoa updated = pessoaRepository.findById(id).orElseThrow(() ->
                 new RuntimeException("Pessoa não encontrada para atualizar"));
         pessoa.setId(updated.getId());
         updated = pessoaRepository.save(pessoa);

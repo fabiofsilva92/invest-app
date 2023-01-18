@@ -32,9 +32,9 @@ public class InvestimentoController {
         return ResponseEntity.ok().body(investimentoService.create(investimento));
     }
 
-    @PutMapping
+    @PutMapping(value = "/{id}")
     public ResponseEntity<RegistroInvestimento> updateInvestimento(@RequestBody RegistroInvestimento investimento,
-                                                                   @RequestParam Long id){
+                                                                   @PathVariable Long id){
         return ResponseEntity.ok().body(investimentoService.updateInvestimento(investimento, id));
     }
 

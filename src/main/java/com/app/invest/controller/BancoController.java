@@ -32,8 +32,9 @@ public class BancoController {
         return ResponseEntity.ok().body(bancoService.create(banco));
     }
 
-    @PutMapping
-    public ResponseEntity<Banco> updateBanco(@RequestBody Banco banco, @RequestParam Long id){
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<Banco> updateBanco(@RequestBody Banco banco,
+                                             @PathVariable Long id){
         return ResponseEntity.ok().body(bancoService.updateBanco(banco, id));
     }
 
