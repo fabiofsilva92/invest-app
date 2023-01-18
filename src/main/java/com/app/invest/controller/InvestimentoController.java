@@ -33,8 +33,9 @@ public class InvestimentoController {
     }
 
     @PutMapping
-    public ResponseEntity<RegistroInvestimento> updateInvestimento(@RequestBody RegistroInvestimento investimento){
-        return ResponseEntity.ok().body(investimentoService.updateInvestimento(investimento));
+    public ResponseEntity<RegistroInvestimento> updateInvestimento(@RequestBody RegistroInvestimento investimento,
+                                                                   @RequestParam Long id){
+        return ResponseEntity.ok().body(investimentoService.updateInvestimento(investimento, id));
     }
 
     @DeleteMapping(value = "/{id}")

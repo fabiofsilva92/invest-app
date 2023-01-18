@@ -30,7 +30,7 @@ public class QueryLogger {
         }
     }
 
-    public void writeQueriesToFileInSeparateThread(String query) {
+    public void logToFile(String query) {
         CompletableFuture.runAsync(() -> {
             try {
                 System.out.println("Entrei no Assync");

@@ -6,7 +6,6 @@ import com.app.invest.utils.QueryLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -14,6 +13,8 @@ public class BancoService {
 
     @Autowired
     private BancoRepository bancoRepository;
+
+
 
     @Autowired
     private QueryLogger queryLogger;
@@ -27,18 +28,25 @@ public class BancoService {
     }
 
     public Banco create(Banco banco){
+        System.out.println("Before .save : "+bancoRepository.toString());
         var created = bancoRepository.save(banco);
-        queryLogger.writeQueriesToFileInSeparateThread("insert into banco (nome) values ('"+banco.getNome()+"');");
+        System.out.println("After .save : "+bancoRepository.toString());
+        queryLogger.logToFile("insert into banco (nome) values ('"+banco.getNome()+"');");
         return created;
     }
 
-    public Banco updateBanco(Banco banco){
-        banco.setId(bancoRepository.findById(banco.getId()).orElseThrow(() -> new RuntimeException("Banco não encontrada para atualizar")).getId());
-        return bancoRepository.save(banco);
+    public Banco updateBanco(Banco banco, Long id){
+        Banco updated = bancoRepository.findById(id).orElseThrow(() -> new RuntimeException("Banco não encontrada para atualizar"));
+        banco.setId(updated.getId());
+        updated = bancoRepository.save(banco);
+        queryLogger.logToFile("update banco set nome = '"+banco.getNome()+"' where id = "+banco.getId()+";");
+        return updated;
     }
 
     public void deleteBanco(Long id){
         bancoRepository.delete(bancoRepository.findById(id).orElseThrow(() -> new RuntimeException("Banco não encontrada para deletar")));
+        queryLogger.logToFile("delete from banco where id = "+id+";");
+
     }
 
 }

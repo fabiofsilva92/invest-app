@@ -28,13 +28,14 @@ public class PessoaController {
     }
 
     @PostMapping
-    public ResponseEntity<Pessoa> createPessoa(@RequestBody Pessoa pessoa) throws IOException {
+    public ResponseEntity<Pessoa> createPessoa(@RequestBody Pessoa pessoa) {
         return ResponseEntity.ok().body(pessoaService.create(pessoa));
     }
 
     @PutMapping
-    public ResponseEntity<Pessoa> updatePessoa(@RequestBody Pessoa pessoa) throws IOException {
-        return ResponseEntity.ok().body(pessoaService.updatePessoa(pessoa));
+    public ResponseEntity<Pessoa> updatePessoa(@RequestBody Pessoa pessoa,
+                                               @RequestParam Long id) {
+        return ResponseEntity.ok().body(pessoaService.updatePessoa(pessoa, id));
     }
 
     @DeleteMapping(value = "/{id}")

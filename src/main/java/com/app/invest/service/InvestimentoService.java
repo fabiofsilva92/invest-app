@@ -6,7 +6,6 @@ import com.app.invest.utils.QueryLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -29,7 +28,7 @@ public class InvestimentoService {
     public RegistroInvestimento create(RegistroInvestimento investimento){
         var created = investimentoRepository.save(investimento);
 
-        queryLogger.writeQueriesToFileInSeparateThread("insert into registro_investimento " +
+        queryLogger.logToFile("insert into registro_investimento " +
                 "(banco, data, investimento, investidor, rendimento, valor, vencimento) values " +
                 "("+investimento.getBanco().getId()+", '" +
                 investimento.getData()+"', '" +
@@ -38,18 +37,28 @@ public class InvestimentoService {
                 investimento.getRendimento()+"', " +
                 investimento.getValor()+", '" +
                 investimento.getVencimento()+"');");
-
-        System.out.println("Terminado Create");
         return created;
     }
 
-    public RegistroInvestimento updateInvestimento(RegistroInvestimento investimento){
-        investimento.setId(investimentoRepository.findById(investimento.getId()).orElseThrow(() -> new RuntimeException("Investimento não encontrada para atualizar")).getId());
-        return investimentoRepository.save(investimento);
+    public RegistroInvestimento updateInvestimento(RegistroInvestimento investimento, Long id){
+        RegistroInvestimento updated = investimentoRepository.findById(id).orElseThrow(() ->
+                new RuntimeException("Investimento não encontrado para atualizar"));
+        investimento.setId(updated.getId());
+        updated = investimento;
+        queryLogger.logToFile("update investimento set data = '"+investimento.getData()+"', " +
+                "banco = "+investimento.getBanco().getId()+", " +
+                "investimento = '"+investimento.getInvestimento()+"', " +
+                "investidor = "+investimento.getPessoa().getId()+", " +
+                "rendimento = '"+investimento.getRendimento()+"', " +
+                "valor = "+investimento.getValor()+", " +
+                "vencimento = '"+investimento.getVencimento()+"' " +
+                "where id = "+investimento.getId()+";");
+        return investimentoRepository.save(updated);
     }
 
     public void deleteInvestimento(Long id){
         investimentoRepository.delete(investimentoRepository.findById(id).orElseThrow(() -> new RuntimeException("Investimento não encontrada para deletar")));
+        queryLogger.logToFile("delete from investimento where id = "+id+";");
     }
 
 }

@@ -33,8 +33,8 @@ public class BancoController {
     }
 
     @PutMapping
-    public ResponseEntity<Banco> updateBanco(@RequestBody Banco banco){
-        return ResponseEntity.ok().body(bancoService.updateBanco(banco));
+    public ResponseEntity<Banco> updateBanco(@RequestBody Banco banco, @RequestParam Long id){
+        return ResponseEntity.ok().body(bancoService.updateBanco(banco, id));
     }
 
     @DeleteMapping(value = "/{id}")
