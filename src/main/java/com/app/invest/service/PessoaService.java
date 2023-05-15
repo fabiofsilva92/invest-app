@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PessoaService {
@@ -21,8 +22,8 @@ public class PessoaService {
         return pessoaRepository.findAll();
     }
 
-    public Pessoa findById(Long id) throws Throwable {
-        return pessoaRepository.findById(id).orElseThrow(() -> new RuntimeException("Pessoa não encontrada"));
+    public Optional<Pessoa> findById(Long id) {
+        return pessoaRepository.findById(id);
     }
 
     public Pessoa create(Pessoa pessoa){
@@ -40,8 +41,14 @@ public class PessoaService {
         return updated;
     }
 
-    public void deletePessoa(Long id){
-        pessoaRepository.delete(pessoaRepository.findById(id).orElseThrow(() -> new RuntimeException("Pessoa não encontrada para deletar")));
+    public boolean deletePessoa(Long id){
+
+        if(pessoaRepository.findById(id).isEmpty()){
+            return false;
+        };
+
+        pessoaRepository.deleteById(id);
         queryLogger.logToFile("delete from pessoa where id = "+id+";");
+        return true;
     }
 }

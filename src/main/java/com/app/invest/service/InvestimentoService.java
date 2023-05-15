@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class InvestimentoService {
@@ -21,8 +22,8 @@ public class InvestimentoService {
         return investimentoRepository.findAll();
     }
 
-    public RegistroInvestimento findById(Long id) throws Throwable {
-        return investimentoRepository.findById(id).orElseThrow(() -> new RuntimeException("Investimento não encontrada"));
+    public Optional<RegistroInvestimento> findById(Long id){
+        return investimentoRepository.findById(id);
     }
 
     public RegistroInvestimento create(RegistroInvestimento investimento){
@@ -56,9 +57,15 @@ public class InvestimentoService {
         return investimentoRepository.save(updated);
     }
 
-    public void deleteInvestimento(Long id){
-        investimentoRepository.delete(investimentoRepository.findById(id).orElseThrow(() -> new RuntimeException("Investimento não encontrada para deletar")));
+    public boolean deleteInvestimento(Long id){
+
+        if(investimentoRepository.findById(id).isEmpty()){
+            return false;
+        }
+
+        investimentoRepository.deleteById(id);
         queryLogger.logToFile("delete from investimento where id = "+id+";");
+        return true;
     }
 
 }

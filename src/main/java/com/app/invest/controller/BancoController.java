@@ -1,13 +1,14 @@
 package com.app.invest.controller;
 
 import com.app.invest.model.Banco;
-import com.app.invest.model.Pessoa;
 import com.app.invest.service.BancoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/banco")
@@ -24,7 +25,13 @@ public class BancoController {
     @GetMapping(value = "/{id}")
     public ResponseEntity<Banco> findById(
             @PathVariable Long id) throws Throwable {
-        return ResponseEntity.ok().body(bancoService.findById(id));
+        Optional<Banco> banco = bancoService.findById(id);
+
+        if(banco.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        return ResponseEntity.ok().body(banco.get());
     }
 
     @PostMapping
@@ -40,7 +47,9 @@ public class BancoController {
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<String> deleteBanco(@PathVariable Long id){
-        bancoService.deleteBanco(id);
-        return ResponseEntity.ok().body("Banco deletado");
+        if(!bancoService.deleteBanco(id)){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Recurso não encontrado");
+        };
+        return ResponseEntity.noContent().build();
     }
 }

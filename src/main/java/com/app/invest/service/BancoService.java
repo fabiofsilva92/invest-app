@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BancoService {
@@ -23,8 +24,8 @@ public class BancoService {
         return bancoRepository.findAll();
     }
 
-    public Banco findById(Long id) throws Throwable {
-        return bancoRepository.findById(id).orElseThrow(() -> new RuntimeException("Banco não encontrada"));
+    public Optional<Banco> findById(Long id) {
+        return bancoRepository.findById(id);
     }
 
     public Banco create(Banco banco){
@@ -43,9 +44,15 @@ public class BancoService {
         return updated;
     }
 
-    public void deleteBanco(Long id){
-        bancoRepository.delete(bancoRepository.findById(id).orElseThrow(() -> new RuntimeException("Banco não encontrada para deletar")));
+    public boolean deleteBanco(Long id){
+
+        if(bancoRepository.findById(id).isEmpty()){
+            return false;
+        }
+
+        bancoRepository.deleteById(id);
         queryLogger.logToFile("delete from banco where id = "+id+";");
+        return true;
 
     }
 

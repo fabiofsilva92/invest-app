@@ -33,13 +33,14 @@ public class QueryLogger {
     public void logToFile(String query) {
         CompletableFuture.runAsync(() -> {
             try {
-                System.out.println("Entrei no Assync");
+                log.info("Criando log de query - {}", query);
                 writeQueriesToFile(query);
             } catch (IOException e) {
                 e.printStackTrace();
+                throw new RuntimeException(e.getMessage());
             }
         }).thenAccept( result -> {
-            log.info("Terminado async.");
+            log.info("Terminado async log query.");
         });
     }
 
